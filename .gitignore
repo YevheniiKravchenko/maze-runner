@@ -1,0 +1,7 @@
+# Build artifacts
+.cache
+dist
+
+# Dependencies
+node_modules
+
