@@ -4,7 +4,7 @@
   "description": "Escape the maze!",
   "scripts": {
     "dev": "parcel src/index.html",
-    "build": "parcel build src/index.html --public-url /maze-runner/",
+    "build": "parcel build src/index.html --public-url ./",
     "test": "echo 'tests not found'"
   },
   "author": "Yevhenii Kravchenko <yevhenii.kravchenko@gmail.com>",
