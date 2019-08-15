@@ -1,6 +1,6 @@
 :root {
   --cell-size: 60px;
-  --cell-font-size: 2rem;
+  --cell-font-size: var(--cell-size);
   --cell-wall-color: #666;
   --cell-active-path-color: #26ef26;
   --cell-visited-color: #ffcece;
@@ -14,7 +14,7 @@ body {
 
 .container {
   display: grid;
-  grid-template-rows: 50px auto 50px;
+  grid-template-rows: 30px auto 20px;
   grid-gap: 10px;
   justify-items: center;
 }
