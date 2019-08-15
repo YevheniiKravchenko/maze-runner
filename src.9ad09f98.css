@@ -1,0 +1,63 @@
+:root {
+  --cell-size: 60px;
+  --cell-font-size: var(--cell-size);
+  --cell-wall-color: #666;
+  --cell-active-path-color: #26ef26;
+  --cell-visited-color: #ffcece;
+  --cell-wall-gradient-from: #404040;
+  --cell-wall-gradient-to: #cacaca;
+}
+
+body {
+  font-family: lato, sans-serif;
+}
+
+.container {
+  display: grid;
+  grid-template-rows: 30px auto 20px;
+  grid-gap: 10px;
+  justify-items: center;
+}
+
+.actions {
+  align-self: center;
+  justify-self: center;
+}
+
+.maze {
+  border: 1px solid grey;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+
+  width: var(--cell-size);
+  height: var(--cell-size);
+  font-size: var(--cell-font-size);
+  transition: background-color 0.4s;
+}
+
+.cell.disabled {
+  background-image: linear-gradient(
+    45deg,
+    var(--cell-wall-gradient-from),
+    var(--cell-wall-gradient-to)
+  );
+}
+
+.cell.active-path {
+  background-color: var(--cell-active-path-color);
+}
+
+.cell.visited {
+  background-color: var(--cell-visited-color);
+}
+
+
+/*# sourceMappingURL=/src.9ad09f98.css.map */

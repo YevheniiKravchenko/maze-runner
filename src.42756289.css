@@ -1,0 +1,2 @@
+:root{--border:1px solid grey}body{font-family:lato,sans-serif}.container{display:grid;grid-template-rows:50px auto;justify-items:center}.actions{align-self:center;justify-self:center}.maze{display:inline-block;border:var(--border)}.row{display:flex}.cell{width:60px;height:60px;font-size:2rem;display:grid;align-content:center;justify-content:center;transition:background-color .3s}.cell.disabled{background:#666}.cell.green{background-color:#32cd32}.cell.visited{background-color:#d3d3d3}
+/*# sourceMappingURL=/src.42756289.css.map */
