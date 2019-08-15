@@ -18,5 +18,8 @@
     "once": "^1.4.0",
     "ramda": "^0.26.1",
     "regenerator-runtime": "^0.13.3"
+  },
+  "resolutions": {
+    "mem": "4.0.0"
   }
 }
