@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - 'node'
+deploy:
+  provider: pages
+  skip_cleanup: true
+  keep_history: true
+  local_dir: ./dist
+  on:
+    branch: master
