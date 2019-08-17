@@ -6,32 +6,48 @@
   --cell-visited-color: #ffcece;
   --cell-wall-gradient-from: #404040;
   --cell-wall-gradient-to: #cacaca;
+  --border-color: grey;
 }
 
 body {
   font-family: lato, sans-serif;
 }
 
+/* Maze structure */
 .container {
   display: grid;
-  grid-template-rows: 30px auto 20px;
+  /* actions is usually 30px, but set auto for small screens, where it takes 2 lines */
+  grid-template-rows: auto auto 20px;
   grid-gap: 10px;
   justify-items: center;
 }
 
-.actions {
-  align-self: center;
-  justify-self: center;
-}
-
 .maze {
-  border: 1px solid grey;
+  border: 1px solid var(--border-color);
 }
 
 .row {
   display: flex;
 }
 
+/* Actions */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.actions > * {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.actions:last-child {
+  margin-right: 0;
+}
+
+/* Cells */
 .cell {
   display: grid;
   align-content: center;
@@ -57,4 +73,34 @@ body {
 
 .cell.visited {
   background-color: var(--cell-visited-color);
+}
+
+/* Buttons */
+button {
+  outline: none;
+  background: none;
+  font-size: 1rem;
+  padding: 5px 20px;
+  border-radius: 2px;
+}
+
+button:hover {
+  background-color: #bbb2b2;
+}
+
+button:active {
+  background-color: #545251;
+  color: #fff;
+}
+
+/* Speed  */
+.speed-control {
+  display: inline-flex;
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  padding: 4px 15px;
+}
+
+.speed-control label {
+  margin-left: 10px;
 }

@@ -71,13 +71,15 @@ function calculateCellSize(length) {
   const RESULT_HEIGHT = 20;
   const VERTICAL_GAP = 10;
   const HORIZONTAL_FIX = 20;
+  const ADDITIONAL_ACTIONS_MARGIN = 10;
 
   const availableHeight =
     window.innerHeight -
     GLOBAL_MARGINS * 2 -
     HEADER_HEIGHT -
     RESULT_HEIGHT -
-    2 * VERTICAL_GAP;
+    2 * VERTICAL_GAP -
+    ADDITIONAL_ACTIONS_MARGIN;
 
   const availableWidth =
     window.innerWidth - 2 * GLOBAL_MARGINS - HORIZONTAL_FIX;
