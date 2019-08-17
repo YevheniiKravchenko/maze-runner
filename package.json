@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url ./",
-    "predeploy": "rm -rf dist && yarn build",
+    "clean-build": "rm -rf dist && yarn build",
     "test": "echo 'tests not found'"
   },
   "author": "Yevhenii Kravchenko <yevhenii.kravchenko@gmail.com>",
