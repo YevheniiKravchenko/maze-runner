@@ -44,11 +44,12 @@ const stepBtn = document.querySelector('#step-btn');
 const clearBtn = document.querySelector('#clear-btn');
 const pauseBtn = document.querySelector('#pause-btn');
 const speedInput = document.querySelector('#speed');
+const resultStatus = document.querySelector('.result');
 
 runBtn.addEventListener('click', () => {
   if (!app.running) {
     app.running = true;
-    game = run(maze, app);
+    game = run(maze, app, { onFailEscape, onSuccessEscape });
     // It needs two time `next()` here due to functionality related to stepping and pausing.
     // It yields first time generator runs, so need to run it again to continue.
     // If pause - unpause, it will continue from that yield.
@@ -71,10 +72,7 @@ stepBtn.addEventListener('click', () => {
 
 clearBtn.addEventListener('click', () => {
   buildMap(maze);
-  runBtn.hidden = false;
-  pauseBtn.hidden = true;
-  stepBtn.hidden = true;
-  clearBtn.hidden = true;
+  buttonsToDefaultState();
 });
 
 pauseBtn.addEventListener('click', () => {
@@ -93,5 +91,29 @@ speedInput.addEventListener('input', ev => {
   // TODO: move calculation logic away
   app.speed = ((11 - Number(ev.target.value)) * 100) / 2;
 });
+
+function onSuccessEscape() {
+  resultStatus.innerHTML = 'Path found';
+  buttonsToFinishedState();
+}
+
+function onFailEscape() {
+  resultStatus.innerHTML = 'Path not found';
+  buttonsToFinishedState();
+}
+
+function buttonsToDefaultState() {
+  runBtn.hidden = false;
+  pauseBtn.hidden = true;
+  stepBtn.hidden = true;
+  clearBtn.hidden = true;
+}
+
+function buttonsToFinishedState() {
+  runBtn.hidden = true;
+  pauseBtn.hidden = true;
+  stepBtn.hidden = true;
+  clearBtn.hidden = false;
+}
 
 buildMap(maze);

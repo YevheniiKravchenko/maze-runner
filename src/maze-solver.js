@@ -74,7 +74,7 @@ function getValueAtPoint(field, [x, y]) {
   return maybeValue || 0;
 }
 
-export async function* run(maze, app) {
+export async function* run(maze, app, finishHandlers) {
   log('start');
   const steps = pathSequence(maze);
 
@@ -89,10 +89,9 @@ export async function* run(maze, app) {
 
       // no escape
       if (done && !point) {
-        app.finished = true;
         app.running = false;
 
-        document.querySelector('.result').innerHTML = 'Path not found';
+        finishHandlers.onFailEscape();
         log('Path found');
         return;
       }
@@ -101,11 +100,9 @@ export async function* run(maze, app) {
       log('nextStep', nextStep);
 
       if (isEqual(nextStep, maze.end)) {
-        app.finished = true;
         app.running = false;
-        app.solved = true;
 
-        document.querySelector('.result').innerHTML = 'Path found';
+        finishHandlers.onSuccessEscape();
         log('Path not found');
         return;
       }
@@ -118,8 +115,6 @@ export async function* run(maze, app) {
 export function getInitialState() {
   return {
     running: false,
-    finished: false,
-    solved: false,
     speed: 350,
   };
 }
