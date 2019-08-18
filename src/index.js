@@ -38,7 +38,14 @@ const maze = {
 const app = getInitialState(); // Shared state of app, running/stopped
 let game; // We need this shared variable to be able to start/stop/step from handlers
 
-document.querySelector('#run-btn').addEventListener('click', () => {
+// Els
+const runBtn = document.querySelector('#run-btn');
+const stepBtn = document.querySelector('#step-btn');
+const clearBtn = document.querySelector('#clear-btn');
+const pauseBtn = document.querySelector('#pause-btn');
+const speedInput = document.querySelector('#speed');
+
+runBtn.addEventListener('click', () => {
   if (!app.running) {
     app.running = true;
     game = run(maze, app);
@@ -48,10 +55,12 @@ document.querySelector('#run-btn').addEventListener('click', () => {
     // Probably should wrap this iterator in abstraction with better interface.
     game.next();
     game.next();
+    pauseBtn.hidden = false;
+    runBtn.hidden = true;
   }
 });
 
-document.querySelector('#step-btn').addEventListener('click', () => {
+stepBtn.addEventListener('click', () => {
   if (!app.running) {
     game.next(true);
   }
@@ -60,22 +69,27 @@ document.querySelector('#step-btn').addEventListener('click', () => {
 // TODO: Need to fix button behavior when multiple button are used.
 // So interesting effects might be shown for now
 
-document
-  .querySelector('#clear-btn')
-  .addEventListener('click', () => buildMap(maze));
+clearBtn.addEventListener('click', () => {
+  buildMap(maze);
+  runBtn.hidden = false;
+  pauseBtn.hidden = true;
+  stepBtn.hidden = true;
+  clearBtn.hidden = true;
+});
 
-document.querySelector('#pause-btn').addEventListener('click', () => {
+pauseBtn.addEventListener('click', () => {
   app.running = !app.running;
-  document.querySelector('#pause-btn').textContent = app.running
-    ? 'Pause'
-    : 'Resume';
+  pauseBtn.textContent = app.running ? 'Pause' : 'Resume';
 
   if (app.running) {
     game.next();
   }
+
+  stepBtn.toggleAttribute('hidden');
+  clearBtn.toggleAttribute('hidden');
 });
 
-document.querySelector('#speed').addEventListener('input', ev => {
+speedInput.addEventListener('input', ev => {
   // TODO: move calculation logic away
   app.speed = ((11 - Number(ev.target.value)) * 100) / 2;
 });
