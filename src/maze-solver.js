@@ -13,13 +13,11 @@ const BOTTOM = [0, 1];
 const RIGHT = [1, 0];
 const LEFT = [-1, 0];
 
-function getPointNeighbors(field, point) {
-  return [TOP, RIGHT, BOTTOM, LEFT].map(offset =>
-    getNeighborPoint(point, offset),
-  );
+function getPointNeighbors(field, point, strategy) {
+  return strategy.map(offset => getNeighborPoint(point, offset));
 }
 
-function* pathSequence(maze) {
+function* pathSequence(maze, strategy) {
   const visitedPoints = new Set();
   const path = [];
 
@@ -29,7 +27,7 @@ function* pathSequence(maze) {
 
   while (true) {
     const currentPoint = path[path.length - 1];
-    const neighbors = getPointNeighbors(maze.field, currentPoint);
+    const neighbors = getPointNeighbors(maze.field, currentPoint, strategy);
 
     const rejectPrevPoint = reject(equals(currentPoint));
     const rejectVisitedPoints = reject(point =>
@@ -74,14 +72,44 @@ function getValueAtPoint(field, [x, y]) {
   return maybeValue || 0;
 }
 
-export async function* run(maze, app, finishHandlers) {
+const strategies = {
+  'RIGHT-BOTTOM-LEFT-TOP': [RIGHT, BOTTOM, LEFT, TOP],
+  'RIGHT-TOP-LEFT-BOTTOM': [RIGHT, TOP, LEFT, BOTTOM],
+  'RIGHT-LEFT-BOTTOM-TOP': [RIGHT, LEFT, BOTTOM, TOP],
+  'RIGHT-LEFT-TOP-BOTTOM': [RIGHT, LEFT, TOP, BOTTOM],
+
+  'TOP-RIGHT-BOTTOM-LEFT': [TOP, RIGHT, BOTTOM, LEFT],
+  'TOP-LEFT-BOTTOM-RIGHT': [TOP, LEFT, BOTTOM, RIGHT],
+  'TOP-BOTTOM-LEFT-RIGHT': [TOP, BOTTOM, LEFT, RIGHT],
+  'TOP-BOTTOM-RIGHT-LEFT': [TOP, BOTTOM, RIGHT, LEFT],
+
+  'BOTTOM-RIGHT-TOP-LEFT': [BOTTOM, RIGHT, TOP, LEFT],
+  'BOTTOM-LEFT-TOP-RIGHT': [BOTTOM, LEFT, TOP, RIGHT],
+  'BOTTOM-TOP-RIGHT-LEFT': [BOTTOM, TOP, RIGHT, LEFT],
+  'BOTTOM-TOP-LEFT-RIGHT': [BOTTOM, TOP, LEFT, RIGHT],
+
+  'LEFT-TOP-RIGHT-BOTTOM': [LEFT, TOP, RIGHT, BOTTOM],
+  'LEFT-BOTTOM-RIGHT-TOP': [LEFT, BOTTOM, RIGHT, TOP],
+  'LEFT-RIGHT-BOTTOM-TOP': [LEFT, RIGHT, BOTTOM, TOP],
+  'LEFT-RIGHT-TOP-BOTTOM': [LEFT, RIGHT, TOP, BOTTOM],
+};
+
+export async function* run(
+  maze,
+  app,
+  finishHandlers,
+  strategy = Object.keys(strategies)[0],
+) {
   log('start');
-  const steps = pathSequence(maze);
+  const steps = pathSequence(maze, strategies[strategy]);
+  let totalTries = 0;
 
   while (true) {
     const runStep = yield; // Run one step
     while (app.running || runStep) {
       runStep = false; // Run only one step in "step" mode
+
+      totalTries++;
 
       const { done, value } = steps.next();
       const { point, path } = value;
@@ -91,23 +119,26 @@ export async function* run(maze, app, finishHandlers) {
       if (done && !point) {
         app.running = false;
 
-        finishHandlers.onFailEscape();
-        log('Path found');
-        return;
+        finishHandlers.onFailEscape(strategy, totalTries);
+        log('Path not found');
+        return totalTries;
       }
 
       markCell(nextStep);
-      log('nextStep', nextStep);
+      // log('nextStep', nextStep);
 
+      // escape
       if (isEqual(nextStep, maze.end)) {
         app.running = false;
 
-        finishHandlers.onSuccessEscape();
-        log('Path not found');
-        return;
+        finishHandlers.onSuccessEscape(strategy, totalTries);
+        log('Path found');
+        return totalTries;
       }
 
-      await sleep(app.speed);
+      if (app.speed > 0) {
+        await sleep(app.speed);
+      }
     }
   }
 }

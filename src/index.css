@@ -9,6 +9,8 @@
   --border-color: grey;
 }
 
+@import './common.css';
+
 body {
   font-family: lato, sans-serif;
 }
@@ -75,24 +77,6 @@ body {
   background-color: var(--cell-visited-color);
 }
 
-/* Buttons */
-button {
-  outline: none;
-  background: none;
-  font-size: 1rem;
-  padding: 5px 20px;
-  border-radius: 2px;
-}
-
-button:hover {
-  background-color: #bbb2b2;
-}
-
-button:active {
-  background-color: #545251;
-  color: #fff;
-}
-
 /* Speed  */
 .speed-control {
   display: inline-flex;
@@ -103,4 +87,10 @@ button:active {
 
 .speed-control label {
   margin-left: 10px;
+}
+
+.simulate-link {
+  position: fixed;
+  right: 3px;
+  bottom: 3px;
 }

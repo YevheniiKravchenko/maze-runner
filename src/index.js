@@ -1,48 +1,19 @@
 import 'regenerator-runtime/runtime';
 import { buildMap } from './map';
 import { run, getInitialState } from './maze-solver';
+import { generateDefaultMaze, generateRandomMaze } from './utils';
 
-//#region Input data
-const matrix = [
-  [1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0],
-  [1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0],
-  [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0],
-  [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-  [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
-  [0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1],
-  [0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-  [1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0],
-  [1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0],
-  [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
-  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-  [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
-  [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-];
-const start1 = [0, 0];
-const end1 = [19, 19];
-
-const maze = {
-  field: matrix,
-  start: start1,
-  end: end1,
-};
-//#endregion
-
-const app = getInitialState(); // Shared state of app, running/stopped
+let app = getInitialState(); // Shared state of app, running/stopped
 let game; // We need this shared variable to be able to start/stop/step from handlers
+
+let maze = generateDefaultMaze();
 
 // Els
 const runBtn = document.querySelector('#run-btn');
 const stepBtn = document.querySelector('#step-btn');
 const clearBtn = document.querySelector('#clear-btn');
 const pauseBtn = document.querySelector('#pause-btn');
+const generateBtn = document.querySelector('#gen-btn');
 const speedInput = document.querySelector('#speed');
 const resultStatus = document.querySelector('.result');
 
@@ -58,6 +29,7 @@ runBtn.addEventListener('click', () => {
     game.next();
     pauseBtn.hidden = false;
     runBtn.hidden = true;
+    generateBtn.hidden = true;
   }
 });
 
@@ -67,12 +39,9 @@ stepBtn.addEventListener('click', () => {
   }
 });
 
-// TODO: Need to fix button behavior when multiple button are used.
-// So interesting effects might be shown for now
-
 clearBtn.addEventListener('click', () => {
   buildMap(maze);
-  buttonsToDefaultState();
+  controlsToDefaultState();
 });
 
 pauseBtn.addEventListener('click', () => {
@@ -87,9 +56,18 @@ pauseBtn.addEventListener('click', () => {
   clearBtn.toggleAttribute('hidden');
 });
 
-speedInput.addEventListener('input', ev => {
+speedInput.addEventListener('input', e => {
   // TODO: move calculation logic away
-  app.speed = ((11 - Number(ev.target.value)) * 100) / 2;
+  app.speed = ((10 - Number(e.target.value)) * 100) / 25;
+});
+
+generateBtn.addEventListener('click', () => {
+  app = getInitialState();
+  controlsToDefaultState();
+
+  maze = generateRandomMaze(100);
+
+  buildMap(maze);
 });
 
 function onSuccessEscape() {
@@ -102,11 +80,14 @@ function onFailEscape() {
   buttonsToFinishedState();
 }
 
-function buttonsToDefaultState() {
+function controlsToDefaultState() {
   runBtn.hidden = false;
   pauseBtn.hidden = true;
   stepBtn.hidden = true;
   clearBtn.hidden = true;
+  generateBtn.hidden = false;
+  resultStatus.innerHTML = '';
+  pauseBtn.textContent = 'Pause';
 }
 
 function buttonsToFinishedState() {
@@ -114,6 +95,8 @@ function buttonsToFinishedState() {
   pauseBtn.hidden = true;
   stepBtn.hidden = true;
   clearBtn.hidden = false;
+  generateBtn.hidden = false;
+  pauseBtn.textContent = 'Pause';
 }
 
 buildMap(maze);

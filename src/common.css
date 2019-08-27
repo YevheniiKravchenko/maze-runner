@@ -1,0 +1,17 @@
+/* Buttons */
+button {
+  outline: none;
+  background: none;
+  font-size: 1rem;
+  padding: 5px 20px;
+  border-radius: 2px;
+}
+
+button:hover {
+  background-color: #bbb2b2;
+}
+
+button:active {
+  background-color: #545251;
+  color: #fff;
+}

@@ -18,13 +18,19 @@ export function buildMap({ field, start, end }) {
 }
 
 export function markCell(point) {
-  getCellByPoint(point).classList.add('active-path');
+  const cell = getCellByPoint(point);
+
+  if (cell) {
+    cell.classList.add('active-path');
+  }
 }
 
 export function unmarkCell(point) {
   const el = getCellByPoint(point);
-  el.classList.remove('active-path');
-  el.classList.add('visited');
+  if (el) {
+    el.classList.remove('active-path');
+    el.classList.add('visited');
+  }
 }
 
 export function cleanEl(el) {
