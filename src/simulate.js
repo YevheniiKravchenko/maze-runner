@@ -3,8 +3,8 @@ import map from 'ramda/src/map';
 import sum from 'ramda/src/sum';
 import sort from 'ramda/src/sort';
 
-import { generateRandomMaze } from '../utils';
-import { run } from '../maze-solver';
+import { generateRandomMaze } from './utils';
+import { run } from './maze-solver';
 
 const TOP = [0, -1];
 const BOTTOM = [0, 1];
